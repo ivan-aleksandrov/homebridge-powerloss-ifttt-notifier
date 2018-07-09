@@ -2,6 +2,10 @@
   "dependencies": {},
   "deprecated": false,
   "description": "Powerloss IFTTT webhook notifier",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ivan-aleksandrov/homebridge-powerloss-ifttt-notifier.git"
+  },
   "engines": {
     "homebridge": ">=0.2.0",
     "node": ">=8.0.0"
@@ -12,6 +16,6 @@
   ],
   "license": "MIT",
   "name": "homebridge-powerloss-ifttt-notifier",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "homepage": "https://github.com/ivan-aleksandrov/homebridge-powerloss-ifttt-notifier#readme"
 }

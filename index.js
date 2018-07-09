@@ -2,6 +2,8 @@
 
 var Service;
 var https = require('https');
+var startTimestamp;
+
 var options = {
   host: 'maker.ifttt.com',
   port: 443,
@@ -19,33 +21,45 @@ module.exports = function (homebridge) {
 
 function PowerlossIFTTTNotifier(log, config) {
   var logger = log;
-
+  var startTimestamp = new Date().toString();
   options.path += config['IFTTTservice'] + '/with/key/' + config['IFTTTkey'];
 
-  var req = https.request(options, function (res) {
-    res.setEncoding('utf8');
-    res.on('data', function (chunk) {
-      logger('Request approved from IFTTT server');
+  function requesting(options, callback) {
+    var req = https.request(options, function (res) {
+      res.setEncoding('utf8');
+      res.on('data', function (chunk) {
+        logger('Request approved from IFTTT server');
+      });
     });
-  });
 
-  req.on('error', function (e) {
-    logger('problem with request: ' + e.message);
-  });
+    req.on('error', function (e) {
+      if (e.message && e.message.startsWith("getaddrinfo ENOTFOUND")) {
+        // Retry in 30 seconds if no internet connection
+        logger('No internet connection. Retrying connection in 30 seconds');
+        setTimeout(function () { return requesting(options, callback) }, 30000);
+      } else {
+        logger('problem with request: ' + e.message);
+      }
+    });
 
-  // Always passing current timestamp as value1
-  var request = '{ "value1": "' + new Date().toString() + '"';
-  if (config['IFTTTvalue2']) {
-    request += ', "value2": "' + config['IFTTTvalue2'] + '"';
-    if (config['IFTTTvalue3']) {
-      request += ', "value3": "' + config['IFTTTvalue3'] + '"';
+    // Always passing current timestamp as value1
+    var request = '{ "value1": "' + startTimestamp + '"';
+    if (config['IFTTTvalue2']) {
+      request += ', "value2": "' + config['IFTTTvalue2'] + '"';
+      if (config['IFTTTvalue3']) {
+        request += ', "value3": "' + config['IFTTTvalue3'] + '"';
+      }
     }
-  }
-  request += ' }'
-  logger("Sending request: " + request);
-  req.write(request);
-  req.end();
-  
+    request += ' }'
+    logger("Sending request: " + request);
+
+    req.write(request);
+    req.end();
+  };
+  requesting(options, function (err, resp) {
+    // Continue
+  });
+
   this._service = new Service.AccessoryInformation();
 }
 

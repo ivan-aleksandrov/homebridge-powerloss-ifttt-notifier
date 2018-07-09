@@ -1,0 +1,16 @@
+{
+  "dependencies": {},
+  "deprecated": false,
+  "description": "Powerloss IFTTT webhook notifier",
+  "engines": {
+    "homebridge": ">=0.2.0",
+    "node": ">=8.0.0"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "powerloss-ifttt-notifier"
+  ],
+  "license": "MIT",
+  "name": "homebridge-powerloss-ifttt-notifier",
+  "version": "0.0.1"
+}

@@ -33,7 +33,7 @@ function PowerlossIFTTTNotifier(log, config) {
     });
 
     req.on('error', function (e) {
-      if (e.message && e.message.startsWith("getaddrinfo ENOTFOUND")) {
+      if (e.message && (e.message.startsWith("getaddrinfo ENOTFOUND") || e.message.startsWith("getaddrinfo EAI_AGAIN"))) {
         // Retry in 30 seconds if no internet connection
         logger('No internet connection. Retrying connection in 30 seconds');
         setTimeout(function () { return requesting(options, callback) }, 30000);
